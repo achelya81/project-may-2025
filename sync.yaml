@@ -1,0 +1,24 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: sync
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/almazova09/flask-app-deploy.git
+    targetRevision: HEAD
+    path: flask-app
+    helm: 
+      values: |
+        deployment: 
+          image: almazova09/flask-app 
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: sync
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true
+    automated:
+      prune: true
+      selfHeal: true 

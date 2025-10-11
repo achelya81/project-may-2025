@@ -1,0 +1,28 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: hello-multi
+  namespace: argocd
+spec:
+  generators:
+    - list:
+        elements:
+          - name: second-cluster
+            namespace: default
+          - name: in-cluster
+            namespace: default
+  template:
+    metadata:
+      name: hello-{{name}}
+    spec:
+      project: default
+      source:
+        repoURL: https://github.com/almazova09/flask-app-deploy.git
+        path: flask-app
+        targetRevision: main
+      destination:
+        name: "{{name}}"          # <-- cluster name from elements[]
+        namespace: "{{namespace}}"
+      syncPolicy:
+        automated: { prune: true, selfHeal: true }
+        syncOptions: [ "CreateNamespace=true" ]

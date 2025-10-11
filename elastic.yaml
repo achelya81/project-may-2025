@@ -1,0 +1,22 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: elastic
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://helm.elastic.co
+    chart: elasticsearch
+    targetRevision: 8.5.1
+    helm:
+      values: |
+        replicas: 2
+        minimumMasterNodes: 1
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "1Gi"
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: hello
